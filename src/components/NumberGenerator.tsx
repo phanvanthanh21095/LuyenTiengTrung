@@ -390,7 +390,7 @@ export default function NumberGenerator() {
               <input
                 type="range"
                 min="3"
-                max="15"
+                max="60"
                 step="1"
                 value={autoplaySpeed}
                 onChange={(e) => setAutoplaySpeed(parseInt(e.target.value))}
@@ -398,7 +398,7 @@ export default function NumberGenerator() {
               />
               <div className="flex justify-between text-[10px] text-gray-500 font-mono font-bold">
                 <span>3s (Nhanh)</span>
-                <span>15s (Chậm)</span>
+                <span>60s (Chậm)</span>
               </div>
             </div>
 
