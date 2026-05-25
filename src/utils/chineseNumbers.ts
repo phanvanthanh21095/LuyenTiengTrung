@@ -191,3 +191,42 @@ export const NUMBER_CHEAT_SHEET = [
   { val: 10000, hz: '万', py: 'wàn', note: 'Hàng vạn (10.000)' },
   { val: 100000000, hz: '亿', py: 'yì', note: 'Hàng ức / trăm triệu (100Tr)' },
 ];
+
+/**
+ * Checks if a number has a zero in the middle that requires pronouncing "ling"
+ */
+export function hasMiddleZero(num: number): boolean {
+  const s = num.toString();
+  const zeroIndex = s.indexOf('0');
+  if (zeroIndex === -1) return false;
+  for (let i = zeroIndex + 1; i < s.length; i++) {
+    if (s[i] !== '0') return true;
+  }
+  return false;
+}
+
+/**
+ * Generates a random number in [min, max] with a slight bias towards numbers containing intermediate zeros (if possible)
+ */
+export function getRandomNumberWithZeroBias(min: number, max: number): number {
+  if (max < 100) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  
+  let rand = Math.floor(Math.random() * (max - min + 1)) + min;
+  if (hasMiddleZero(rand)) {
+    return rand;
+  }
+  
+  // 35% chance to redraw up to 3 times to get a number with a middle zero
+  if (Math.random() < 0.35) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const nextRand = Math.floor(Math.random() * (max - min + 1)) + min;
+      if (hasMiddleZero(nextRand)) {
+        return nextRand;
+      }
+    }
+  }
+  
+  return rand;
+}

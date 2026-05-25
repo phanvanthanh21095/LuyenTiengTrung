@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { RefreshCw, CheckCircle, XCircle, Award, Volume2, HelpCircle, Trophy, Sparkles } from 'lucide-react';
-import { convertNumberToChinese } from '../utils/chineseNumbers';
+import { convertNumberToChinese, getRandomNumberWithZeroBias } from '../utils/chineseNumbers';
 import { speakChinese } from '../utils/speech';
 
 // Quiz mode definitions
@@ -50,7 +50,7 @@ export default function QuizPanel() {
   // Generate a distinct list of distractors
   const generateQuestion = () => {
     const { min, max } = getMinMax();
-    const correctVal = Math.floor(Math.random() * (max - min + 1)) + min;
+    const correctVal = getRandomNumberWithZeroBias(min, max);
     
     // Generate distractors
     const devSet = new Set<number>();

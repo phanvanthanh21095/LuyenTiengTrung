@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, RefreshCw, Eye, EyeOff, Play, Pause, AlertCircle, ChevronsRight, ArrowRight, Settings2, Sliders } from 'lucide-react';
-import { convertNumberToChinese } from '../utils/chineseNumbers';
+import { convertNumberToChinese, getRandomNumberWithZeroBias } from '../utils/chineseNumbers';
 import AudioPronounceButton from './AudioPronounceButton';
 
 // Default presets for the picker
@@ -47,8 +47,7 @@ export default function NumberGenerator() {
   // Generate random number
   const handleRandomize = () => {
     const { min, max } = getRange();
-    const rangeSize = max - min + 1;
-    const rand = Math.floor(Math.random() * rangeSize) + min;
+    const rand = getRandomNumberWithZeroBias(min, max);
     setCurrentNumber(rand);
     setIsRevealed(false);
   };
