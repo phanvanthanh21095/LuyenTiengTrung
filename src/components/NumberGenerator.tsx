@@ -12,8 +12,10 @@ const NUMBER_PRESETS = [
   { id: '4', label: '4 chữ số', min: 1000, max: 9999, placeholder: '1.000 - 9.999' },
   { id: '5', label: '5 chữ số', min: 10000, max: 99999, placeholder: '10.000 - 99.999' },
   { id: '6', label: '6 chữ số', min: 100000, max: 999999, placeholder: '100.000 - 999.999' },
-  { id: 'mixed', label: 'Hỗn hợp (Tất cả)', min: 0, max: 999999, placeholder: '0 - 999.999' },
-  { id: 'custom', label: 'Tự chọn khoảng', min: 0, max: 999999, placeholder: 'Tùy biến...' },
+  { id: 'million', label: 'Hàng triệu', min: 1000000, max: 99999999, placeholder: '1 Tr - 99 Tr' },
+  { id: 'billion', label: 'Hàng trăm triệu - Tỷ', min: 100000000, max: 10000000000, placeholder: '100 Tr - 10 Tỷ' },
+  { id: 'mixed', label: 'Hỗn hợp (Tất cả)', min: 0, max: 10000000000, placeholder: '0 - 10 Tỷ' },
+  { id: 'custom', label: 'Tự chọn khoảng', min: 0, max: 10000000000, placeholder: 'Tùy biến...' },
 ];
 
 export default function NumberGenerator() {
@@ -120,23 +122,63 @@ export default function NumberGenerator() {
   const getBreakdown = (num: number) => {
     if (num === 0) return '0 = 零 (líng)';
     const parts = [];
-    if (num >= 100000) {
-      const hundredK = Math.floor(num / 100000);
-      parts.push(`${hundredK * 100.0}k`);
+    
+    // Hundred Millions and above (亿 - yì)
+    if (num >= 100000000) {
+      const yì = Math.floor(num / 100000000);
+      parts.push(`${yì.toLocaleString('vi-VN')} Ức (100.000.000)`);
     }
-    const wàn = Math.floor((num % 100000) / 10000);
-    if (wàn > 0) parts.push(`${wàn} Vạn (10.000)`);
-    const qiān = Math.floor((num % 10000) / 1000);
-    if (qiān > 0) parts.push(`${qiān} Nghìn`);
-    const bǎi = Math.floor((num % 1000) / 100);
-    if (bǎi > 0) parts.push(`${bǎi} Trăm`);
-    const shí = Math.floor((num % 100) / 10);
-    if (shí > 0) parts.push(`${shí} Chục`);
-    const ones = num % 10;
-    if (ones > 0) parts.push(`${ones} Đơn vị`);
+    
+    // Ten Thousands (万 - wàn)
+    const wàn = Math.floor((num % 100000000) / 10000);
+    if (wàn > 0) {
+      parts.push(`${wàn.toLocaleString('vi-VN')} Vạn (10.000)`);
+    }
+    
+    // Remaining units (under 10,000)
+    const remainder = num % 10000;
+    if (remainder > 0) {
+      const qiān = Math.floor(remainder / 1000);
+      if (qiān > 0) parts.push(`${qiān} Nghìn`);
+      
+      const bǎi = Math.floor((remainder % 1000) / 100);
+      if (bǎi > 0) parts.push(`${bǎi} Trăm`);
+      
+      const shí = Math.floor((remainder % 100) / 10);
+      if (shí > 0) parts.push(`${shí} Chục`);
+      
+      const ones = remainder % 10;
+      if (ones > 0) parts.push(`${ones} Đơn vị`);
+    }
 
     return parts.join(' + ');
   };
+
+  // Dynamically set font sizes to prevent cards overflow
+  const getNumberFontSizeClass = (numStr: string) => {
+    const len = numStr.length;
+    if (len <= 7) return 'text-[72px] sm:text-[120px]';
+    if (len <= 11) return 'text-[52px] sm:text-[84px]';
+    return 'text-[36px] sm:text-[64px]';
+  };
+
+  const getHanziFontSizeClass = (hzStr: string) => {
+    const len = hzStr.length;
+    if (len <= 6) return 'text-5xl sm:text-6xl';
+    if (len <= 12) return 'text-3xl sm:text-4xl';
+    return 'text-2xl sm:text-3xl';
+  };
+
+  const getPinyinFontSizeClass = (pyStr: string) => {
+    const len = pyStr.length;
+    if (len <= 30) return 'text-2xl';
+    if (len <= 50) return 'text-lg sm:text-xl';
+    return 'text-sm sm:text-base';
+  };
+
+  const numberFontSize = getNumberFontSizeClass(displayFormattedNumber);
+  const hanziFontSize = getHanziFontSizeClass(hz);
+  const pinyinFontSize = getPinyinFontSizeClass(py);
 
   return (
     <div className="space-y-6">
@@ -147,7 +189,7 @@ export default function NumberGenerator() {
           DẢI CHỮ SỐ THỰC HÀNH:
         </h3>
         
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {NUMBER_PRESETS.map((preset) => (
             <button
               key={preset.id}
@@ -178,7 +220,7 @@ export default function NumberGenerator() {
                 id="custom-min"
                 type="number"
                 min="0"
-                max="999999"
+                max="10000000000"
                 value={customMin}
                 onChange={(e) => setCustomMin(Math.max(0, parseInt(e.target.value) || 0))}
                 className="w-full px-3 py-2 text-sm bg-white border-2 border-black rounded-lg focus:outline-none font-bold font-mono"
@@ -190,7 +232,7 @@ export default function NumberGenerator() {
                 id="custom-max"
                 type="number"
                 min="0"
-                max="999999"
+                max="10000000000"
                 value={customMax}
                 onChange={(e) => setCustomMax(Math.max(0, parseInt(e.target.value) || 0))}
                 className="w-full px-3 py-2 text-sm bg-white border-2 border-black rounded-lg focus:outline-none font-bold font-mono"
@@ -205,7 +247,7 @@ export default function NumberGenerator() {
         {/* Flashcard wrapper */}
         <div 
           onClick={handleReveal}
-          className="w-full max-w-xl bg-white border-4 border-black rounded-[40px] p-8 sm:p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] cursor-pointer relative overflow-hidden group select-none hover:-translate-y-1 hover:shadow-[14px_14px_0px_0px_rgba(0,0,0,1)] transition-all"
+          className="w-full bg-white border-4 border-black rounded-[40px] p-8 sm:p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] cursor-pointer relative overflow-hidden group select-none hover:-translate-y-1 hover:shadow-[14px_14px_0px_0px_rgba(0,0,0,1)] transition-all"
           title="Nhấp vào để lật xem phiên âm hoặc ẩn đi"
           id="flashcard-click-area"
         >
@@ -216,8 +258,8 @@ export default function NumberGenerator() {
             </span>
 
             {/* Giant Number Visual display */}
-            <div className="py-2">
-              <span className="text-[72px] sm:text-[96px] font-sans font-black tracking-tighter text-black leading-none" id="current-number-display">
+            <div className="py-2 w-full overflow-hidden">
+              <span className={`${numberFontSize} font-sans font-black tracking-tighter text-black leading-none block break-all`} id="current-number-display">
                 {displayFormattedNumber}
               </span>
             </div>
@@ -232,7 +274,7 @@ export default function NumberGenerator() {
             <div className="w-full border-t-2 border-black my-2" />
 
             {/* Hidden / Revealed Core Mandarin Answer Area */}
-            <div className="h-44 flex flex-col items-center justify-center w-full">
+            <div className="min-h-[11rem] py-2 flex flex-col items-center justify-center w-full">
               <AnimatePresence mode="wait">
                 {!isRevealed ? (
                   <motion.div
@@ -257,12 +299,12 @@ export default function NumberGenerator() {
                     className="w-full space-y-3.5"
                   >
                     {/* Chinese Characters Hanzi */}
-                    <div className="text-5xl sm:text-6xl font-black text-[#FF4F4F] select-all tracking-wide" id="revealed-hanzi">
+                    <div className={`${hanziFontSize} font-black text-[#FF4F4F] select-all tracking-wide`} id="revealed-hanzi">
                       {hz}
                     </div>
 
                     {/* Pinyin Phonetic with accents */}
-                    <div className="text-2xl font-mono italic font-black text-[#3B82F6] tracking-wider" id="revealed-pinyin">
+                    <div className={`${pinyinFontSize} font-mono italic font-black text-[#3B82F6] tracking-wider`} id="revealed-pinyin">
                       {py}
                     </div>
 
@@ -278,7 +320,7 @@ export default function NumberGenerator() {
         </div>
 
         {/* Action Controls Panel below card */}
-        <div className="w-full max-w-xl mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="w-full mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Main Manual button triggers */}
           <button
             onClick={handleReveal}
@@ -317,7 +359,7 @@ export default function NumberGenerator() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-xl mt-4 p-4.5 bg-[#FDBA74] border-2 border-black text-black rounded-2xl flex items-start gap-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+            className="w-full mt-4 p-4.5 bg-[#FDBA74] border-2 border-black text-black rounded-2xl flex items-start gap-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
           >
             <AlertCircle className="w-5 h-5 text-black shrink-0 mt-0.5" />
             <div>
@@ -328,7 +370,7 @@ export default function NumberGenerator() {
         )}
 
         {/* Autoplay & Listening Hub Extra Customization Box */}
-        <div className="w-full max-w-xl bg-white border-4 border-black rounded-3xl p-6 mt-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <div className="w-full bg-white border-4 border-black rounded-3xl p-6 mt-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
           <h4 className="font-black text-black text-sm mb-4 flex items-center justify-between">
             <span className="flex items-center gap-1.5 uppercase tracking-wider">
               <Play className="w-4 h-4 text-[#3B82F6]" />

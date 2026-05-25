@@ -21,6 +21,8 @@ const PRESET_RANGES = [
   { label: 'Trung bình (10 - 99)', min: 10, max: 99 },
   { label: 'Thử thách (100 - 999)', min: 100, max: 999 },
   { label: 'Siêu việt (1.000 - 99.999)', min: 1000, max: 99999 },
+  { label: 'Hàng Triệu (1 Tr - 99 Tr)', min: 1000000, max: 99999999 },
+  { label: 'Hàng Tỷ (100 Tr - 10 Tỷ)', min: 100000000, max: 10000000000 },
 ];
 
 export default function QuizPanel() {
@@ -62,7 +64,7 @@ export default function QuizPanel() {
     }
 
     // 2. Offsets (nearby counts)
-    const offsets = [1, -1, 10, -10, 5, -5, 100, -100];
+    const offsets = [1, -1, 10, -10, 5, -5, 100, -100, 1000, -1000, 10000, -10000, 100000, -100000, 1000000, -1000000];
     for (const offset of offsets) {
       const val = correctVal + offset;
       if (val >= min && val <= max && val !== correctVal) {
@@ -156,6 +158,28 @@ export default function QuizPanel() {
     setStreak(0);
   };
 
+  // Dynamic font sizing helpers for QuizPanel questions
+  const getQuizNumberFontSizeClass = (numStr: string) => {
+    const len = numStr.length;
+    if (len <= 7) return 'text-5xl sm:text-6xl';
+    if (len <= 11) return 'text-3xl sm:text-4xl';
+    return 'text-2xl sm:text-3xl';
+  };
+
+  const getQuizHzFontSizeClass = (hzStr: string) => {
+    const len = hzStr.length;
+    if (len <= 6) return 'text-5xl';
+    if (len <= 12) return 'text-3xl';
+    return 'text-2xl';
+  };
+
+  const quizDisplayNumber = currentQuestion ? currentQuestion.correctNumber.toLocaleString('vi-VN') : '';
+  const quizDisplayHz = currentQuestion ? convertNumberToChinese(currentQuestion.correctNumber).hz : '';
+  const quizDisplayPy = currentQuestion ? convertNumberToChinese(currentQuestion.correctNumber).py : '';
+  
+  const quizNumberFontSize = getQuizNumberFontSizeClass(quizDisplayNumber);
+  const quizHzFontSize = getQuizHzFontSizeClass(quizDisplayHz);
+
   return (
     <div className="bg-white border-4 border-black rounded-[30px] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] space-y-6">
       {/* Quiz statistics panel */}
@@ -224,7 +248,7 @@ export default function QuizPanel() {
       {/* Range difficulty selector */}
       <div className="space-y-2">
         <label className="text-xs font-black text-black block uppercase tracking-wide">Độ khó dải số luyện phản xạ:</label>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
           {PRESET_RANGES.map((preset, idx) => (
             <button
               key={idx}
@@ -253,8 +277,8 @@ export default function QuizPanel() {
 
           <div className="h-32 flex items-center justify-center">
             {activeTab === 'number-to-pinyin' && (
-              <span className="text-5xl sm:text-6xl font-black text-black tracking-tight select-none">
-                {currentQuestion.correctNumber.toLocaleString('vi-VN')}
+              <span className={`${quizNumberFontSize} font-black text-black tracking-tight select-none block break-all`}>
+                {quizDisplayNumber}
               </span>
             )}
 
@@ -273,12 +297,12 @@ export default function QuizPanel() {
             )}
 
             {activeTab === 'hanzi-to-number' && (
-              <div className="text-center space-y-2">
-                <span className="text-5xl font-black text-black block select-none">
-                  {convertNumberToChinese(currentQuestion.correctNumber).hz}
+              <div className="text-center space-y-2 w-full overflow-hidden">
+                <span className={`${quizHzFontSize} font-black text-black block select-none break-all`}>
+                  {quizDisplayHz}
                 </span>
-                <span className="text-sm font-mono text-gray-700 italic font-bold">
-                  ({convertNumberToChinese(currentQuestion.correctNumber).py})
+                <span className="text-sm font-mono text-gray-700 italic font-bold block break-words">
+                  ({quizDisplayPy})
                 </span>
               </div>
             )}

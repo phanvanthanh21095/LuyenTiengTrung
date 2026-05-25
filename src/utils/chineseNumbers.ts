@@ -105,7 +105,7 @@ function convert4Digits(part: number, isSubPart: boolean): { hzWords: string[]; 
 }
 
 /**
- * Converts any integer between 0 and 99,999,999 to Hanzi and Pinyin.
+ * Converts any integer between 0 and 99,999,999,999 to Hanzi and Pinyin.
  */
 export function convertNumberToChinese(num: number): ChineseNumberRepresentation {
   // Validate and handle floats or negative numbers gracefully just in case
@@ -115,44 +115,59 @@ export function convertNumberToChinese(num: number): ChineseNumberRepresentation
     return { hz: '零', py: 'líng' };
   }
 
-  const wànPart = Math.floor(n / 10000);
+  const yìPart = Math.floor(n / 100000000);
+  const wànPart = Math.floor((n % 100000000) / 10000);
   const unitPart = n % 10000;
 
   const hzParts: string[] = [];
   const pyParts: string[] = [];
 
-  // Handle the Ten-Thousand (万 - wàn) group
+  // 1. Handle Yi (亿) group (Hundred Millions and above)
+  if (yìPart > 0) {
+    if (yìPart === 2) {
+      hzParts.push('两');
+      pyParts.push('liǎng');
+    } else {
+      const yiRes = convert4Digits(yìPart, false);
+      hzParts.push(...yiRes.hzWords);
+      pyParts.push(...yiRes.pyWords);
+    }
+    hzParts.push('亿');
+    pyParts.push('yì');
+  }
+
+  // 2. Handle Wan (万) group (Ten Thousands to Millions)
   if (wànPart > 0) {
-    const wanRes = convert4Digits(wànPart, false);
-    
-    // Standard rule: 20000 alone is 两万 (liǎng wàn), NOT 二万 (èr wàn).
+    // If we have Yi part and Wan part doesn't have thousands (i.e. wànPart < 1000),
+    // we need to insert '零'
+    if (yìPart > 0 && wànPart < 1000) {
+      hzParts.push('零');
+      pyParts.push('líng');
+    }
+
     if (wànPart === 2) {
       hzParts.push('两');
       pyParts.push('liǎng');
     } else {
+      const wanRes = convert4Digits(wànPart, yìPart > 0);
       hzParts.push(...wanRes.hzWords);
       pyParts.push(...wanRes.pyWords);
     }
-    
     hzParts.push('万');
     pyParts.push('wàn');
-
-    // Rule for "Zero insertion" after 'wàn':
-    // If unit part is greater than 0 but less than 1000 (meaning there is a zero in thousands place, e.g. 10,005 -> 一万零五)
-    // we insert '零' (líng) between the 'wan' and 'unit' group.
-    if (unitPart > 0) {
-      if (unitPart < 1000) {
-        hzParts.push('零');
-        pyParts.push('líng');
-      }
-      
-      const unitRes = convert4Digits(unitPart, true);
-      hzParts.push(...unitRes.hzWords);
-      pyParts.push(...unitRes.pyWords);
+  } else if (yìPart > 0 && unitPart > 0) {
+    // If wànPart is 0, but we have both yìPart and unitPart, we need to insert '零'
+    // only if unitPart doesn't start its own zero (i.e. unitPart >= 1000).
+    // If unitPart < 1000, convert4Digits(unitPart, true) will automatically add '零'.
+    if (unitPart >= 1000) {
+      hzParts.push('零');
+      pyParts.push('líng');
     }
-  } else {
-    // Only the unit group (below 10,000)
-    const unitRes = convert4Digits(unitPart, false);
+  }
+
+  // 3. Handle Unit group
+  if (unitPart > 0) {
+    const unitRes = convert4Digits(unitPart, (yìPart > 0 || wànPart > 0));
     hzParts.push(...unitRes.hzWords);
     pyParts.push(...unitRes.pyWords);
   }
@@ -169,9 +184,10 @@ export function convertNumberToChinese(num: number): ChineseNumberRepresentation
 export const NUMBER_CHEAT_SHEET = [
   { val: 0, hz: '零', py: 'líng', note: 'Số không' },
   { val: 1, hz: '一', py: 'yī', note: 'Số một' },
-  { val: 2, hz: '二 / 两', py: 'èr / liǎng', note: 'Dùng 二 cho số đếm lẻ, 两 cho hàng trăm/nghìn/vạn' },
+  { val: 2, hz: '二 / 两', py: 'èr / liǎng', note: 'Dùng 二 cho số lẻ, 两 cho hàng trăm/nghìn/vạn/ức' },
   { val: 10, hz: '十', py: 'shí', note: 'Hàng chục' },
   { val: 100, hz: '百', py: 'bǎi', note: 'Hàng trăm' },
   { val: 1000, hz: '千', py: 'qiān', note: 'Hàng nghìn' },
-  { val: 10000, hz: '万', py: 'wàn', note: 'Hàng vạn (10.000) - vô cùng quan trọng' },
+  { val: 10000, hz: '万', py: 'wàn', note: 'Hàng vạn (10.000)' },
+  { val: 100000000, hz: '亿', py: 'yì', note: 'Hàng ức / trăm triệu (100Tr)' },
 ];

@@ -43,7 +43,7 @@ export default function App() {
       </header>
 
       {/* Hero Welcome banner */}
-      <div className="max-w-6xl mx-auto px-4 pt-8">
+      <div className="max-w-7xl mx-auto px-4 pt-8">
         <div className="bg-[#3B82F6] text-white border-4 border-black rounded-[30px] p-6 sm:p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden mb-8">
           {/* Abs decorator circles */}
           <div className="absolute -right-10 -bottom-10 w-44 h-44 bg-white/10 rounded-full filter blur-xl" />
@@ -65,24 +65,22 @@ export default function App() {
         <div className="flex bg-white border-4 border-black p-1.5 rounded-2xl max-w-md mx-auto mb-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
           <button
             onClick={() => setActiveTab('practice')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black transition-all ${
-              activeTab === 'practice'
-                ? 'bg-[#3B82F6] text-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-                : 'text-black hover:bg-gray-100 hover:text-black'
-            }`}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black transition-all ${activeTab === 'practice'
+              ? 'bg-[#3B82F6] text-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              : 'text-black hover:bg-gray-100 hover:text-black'
+              }`}
             id="main-tab-practice-btn"
           >
             <Sparkles className="w-4 h-4" />
             <span>Luyện Số Ngẫu Nhiên</span>
           </button>
-          
+
           <button
             onClick={() => setActiveTab('quiz')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black transition-all ${
-              activeTab === 'quiz'
-                ? 'bg-[#3B82F6] text-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-                : 'text-black hover:bg-gray-100 hover:text-black'
-            }`}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black transition-all ${activeTab === 'quiz'
+              ? 'bg-[#3B82F6] text-white border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              : 'text-black hover:bg-gray-100 hover:text-black'
+              }`}
             id="main-tab-quiz-btn"
           >
             <Trophy className="w-4 h-4" />
