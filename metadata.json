@@ -1,0 +1,6 @@
+{
+  "name": "Luyện Số Tiếng Trung",
+  "description": "Ứng dụng random số ngẫu nhiên, hiển thị Hán tự và phiên âm Pinyin giúp luyện nghe và phát âm số tiếng Trung chính xác.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
