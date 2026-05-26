@@ -230,3 +230,22 @@ export function getRandomNumberWithZeroBias(min: number, max: number): number {
   
   return rand;
 }
+
+/**
+ * Formats a number with dots grouped by 4 digits (Chinese-style) from 5 digits onwards.
+ * For example: 31456 -> 3.1456
+ */
+export function formatChineseStyleNumber(num: number): string {
+  const s = num.toString();
+  const len = s.length;
+  if (len < 5) return s;
+
+  const parts: string[] = [];
+  let i = len;
+  while (i > 0) {
+    const start = Math.max(0, i - 4);
+    parts.unshift(s.slice(start, i));
+    i = start;
+  }
+  return parts.join('.');
+}

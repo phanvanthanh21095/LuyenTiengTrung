@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, RefreshCw, Eye, EyeOff, Play, Pause, AlertCircle, ChevronsRight, ArrowRight, Settings2, Sliders } from 'lucide-react';
-import { convertNumberToChinese, getRandomNumberWithZeroBias } from '../utils/chineseNumbers';
+import { convertNumberToChinese, getRandomNumberWithZeroBias, formatChineseStyleNumber } from '../utils/chineseNumbers';
 import AudioPronounceButton from './AudioPronounceButton';
 
 // Default presets for the picker
@@ -114,8 +114,8 @@ export default function NumberGenerator() {
 
   const { hz, py } = convertNumberToChinese(currentNumber);
 
-  // Group number into formatted strings based on Locale for easy reading
-  const displayFormattedNumber = currentNumber.toLocaleString('vi-VN');
+  // Group number into formatted strings based on Chinese style (4 digits grouping) for easy reading
+  const displayFormattedNumber = formatChineseStyleNumber(currentNumber);
 
   // Generate logical grouping text to help users learn the conversion breakdown
   const getBreakdown = (num: number) => {

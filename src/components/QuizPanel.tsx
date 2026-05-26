@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { RefreshCw, CheckCircle, XCircle, Award, Volume2, HelpCircle, Trophy, Sparkles } from 'lucide-react';
-import { convertNumberToChinese, getRandomNumberWithZeroBias } from '../utils/chineseNumbers';
+import { convertNumberToChinese, getRandomNumberWithZeroBias, formatChineseStyleNumber } from '../utils/chineseNumbers';
 import { speakChinese } from '../utils/speech';
 
 // Quiz mode definitions
@@ -173,7 +173,7 @@ export default function QuizPanel() {
     return 'text-2xl';
   };
 
-  const quizDisplayNumber = currentQuestion ? currentQuestion.correctNumber.toLocaleString('vi-VN') : '';
+  const quizDisplayNumber = currentQuestion ? formatChineseStyleNumber(currentQuestion.correctNumber) : '';
   const quizDisplayHz = currentQuestion ? convertNumberToChinese(currentQuestion.correctNumber).hz : '';
   const quizDisplayPy = currentQuestion ? convertNumberToChinese(currentQuestion.correctNumber).py : '';
   
@@ -341,7 +341,7 @@ export default function QuizPanel() {
                   ) : (
                     // For sound / hanzi modes, choices are digits
                     <span className="text-2xl font-black tracking-tight">
-                      {option.number.toLocaleString('vi-VN')}
+                      {formatChineseStyleNumber(option.number)}
                     </span>
                   )}
                 </button>
