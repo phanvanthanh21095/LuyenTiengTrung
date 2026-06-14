@@ -49,7 +49,7 @@ export default function App() {
           <div className="absolute -right-10 -bottom-10 w-44 h-44 bg-white/10 rounded-full filter blur-xl" />
           <div className="absolute top-4 right-1/4 w-28 h-28 bg-emerald-500/20 rounded-full filter blur-lg" />
 
-          <div className="max-w-xl space-y-4 relative z-10">
+          <div className="max-w-xl space-y-4 relative z-1">
             <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#FFD600] border-2 border-black text-black text-xs font-black uppercase tracking-wider">
               <GraduationCap className="w-4 h-4 text-black" />
               Luyện Trực Quan & Sẵn Giọng Nói

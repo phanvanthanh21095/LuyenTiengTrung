@@ -78,7 +78,7 @@ export default function NumberGenerator() {
     if (isAutoplayActive) {
       // First cycle: Reveal if not revealed, or wait and move to next
       const intervalMs = autoplaySpeed * 1000;
-      
+
       const runCycle = () => {
         // If not revealed, reveal it
         if (!isRevealed) {
@@ -121,31 +121,31 @@ export default function NumberGenerator() {
   const getBreakdown = (num: number) => {
     if (num === 0) return '0 = 零 (líng)';
     const parts = [];
-    
+
     // Hundred Millions and above (亿 - yì)
     if (num >= 100000000) {
       const yì = Math.floor(num / 100000000);
       parts.push(`${yì.toLocaleString('vi-VN')} Ức (100.000.000)`);
     }
-    
+
     // Ten Thousands (万 - wàn)
     const wàn = Math.floor((num % 100000000) / 10000);
     if (wàn > 0) {
       parts.push(`${wàn.toLocaleString('vi-VN')} Vạn (10.000)`);
     }
-    
+
     // Remaining units (under 10,000)
     const remainder = num % 10000;
     if (remainder > 0) {
       const qiān = Math.floor(remainder / 1000);
       if (qiān > 0) parts.push(`${qiān} Nghìn`);
-      
+
       const bǎi = Math.floor((remainder % 1000) / 100);
       if (bǎi > 0) parts.push(`${bǎi} Trăm`);
-      
+
       const shí = Math.floor((remainder % 100) / 10);
       if (shí > 0) parts.push(`${shí} Chục`);
-      
+
       const ones = remainder % 10;
       if (ones > 0) parts.push(`${ones} Đơn vị`);
     }
@@ -187,17 +187,16 @@ export default function NumberGenerator() {
           <Sliders className="w-5 h-5 text-[#3B82F6]" />
           DẢI CHỮ SỐ THỰC HÀNH:
         </h3>
-        
+
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {NUMBER_PRESETS.map((preset) => (
             <button
               key={preset.id}
               onClick={() => setSelectedPreset(preset.id)}
-              className={`p-3.5 text-xs font-black rounded-xl transition-all border-2 border-black text-left flex flex-col justify-between shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-none ${
-                selectedPreset === preset.id
-                  ? 'bg-[#3B82F6] text-white'
-                  : 'bg-[#E0E7FF] text-black hover:bg-[#C7D2FE]'
-              }`}
+              className={`p-3.5 text-xs font-black rounded-xl transition-all border-2 border-black text-left flex flex-col justify-between shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] active:translate-y-[2px] active:shadow-none ${selectedPreset === preset.id
+                ? 'bg-[#3B82F6] text-white'
+                : 'bg-[#E0E7FF] text-black hover:bg-[#C7D2FE]'
+                }`}
               id={`preset-btn-${preset.id}`}
             >
               <span className="font-extrabold block">{preset.label}</span>
@@ -244,13 +243,13 @@ export default function NumberGenerator() {
       {/* Main Flashcard Container */}
       <div className="flex flex-col items-center">
         {/* Flashcard wrapper */}
-        <div 
+        <div
           onClick={handleReveal}
           className="w-full bg-white border-4 border-black rounded-[40px] p-8 sm:p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] cursor-pointer relative overflow-hidden group select-none hover:-translate-y-1 hover:shadow-[14px_14px_0px_0px_rgba(0,0,0,1)] transition-all"
           title="Nhấp vào để lật xem phiên âm hoặc ẩn đi"
           id="flashcard-click-area"
         >
-          <div className="flex flex-col items-center text-center space-y-6 relative z-10">
+          <div className="flex flex-col items-center text-center space-y-6 relative z-1">
             {/* Range indicator badge */}
             <span className="px-4 py-1 rounded-full bg-[#FFD600] border-2 border-black text-black text-[11px] font-black tracking-wider uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               {NUMBER_PRESETS.find((p) => p.id === selectedPreset)?.label}
@@ -323,11 +322,10 @@ export default function NumberGenerator() {
           {/* Main Manual button triggers */}
           <button
             onClick={handleReveal}
-            className={`flex items-center justify-center gap-2 py-4 px-6 rounded-2xl font-black border-2 border-black transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none ${
-              isRevealed
-                ? 'bg-white text-black hover:bg-gray-100'
-                : 'bg-[#FFD600] text-black hover:bg-[#FFE55C]'
-            }`}
+            className={`flex items-center justify-center gap-2 py-4 px-6 rounded-2xl font-black border-2 border-black transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none ${isRevealed
+              ? 'bg-white text-black hover:bg-gray-100'
+              : 'bg-[#FFD600] text-black hover:bg-[#FFE55C]'
+              }`}
             id="reveal-toggle-btn"
           >
             {isRevealed ? (
@@ -416,11 +414,10 @@ export default function NumberGenerator() {
               <button
                 type="button"
                 onClick={() => setIsAutoplayActive(!isAutoplayActive)}
-                className={`py-2 px-4 rounded-xl text-xs font-black border-2 border-black transition-all flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:scale-95 ${
-                  isAutoplayActive
-                    ? 'bg-[#FFD600] text-black animate-pulse'
-                    : 'bg-[#FEF9C3] text-black hover:bg-[#FFF]'
-                }`}
+                className={`py-2 px-4 rounded-xl text-xs font-black border-2 border-black transition-all flex items-center justify-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:scale-95 ${isAutoplayActive
+                  ? 'bg-[#FFD600] text-black animate-pulse'
+                  : 'bg-[#FEF9C3] text-black hover:bg-[#FFF]'
+                  }`}
               >
                 {isAutoplayActive ? (
                   <>
